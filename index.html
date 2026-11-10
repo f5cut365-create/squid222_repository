@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>메모리1409 (Memory 1409) - 아늑한 갤러리 카페</title>
+  <style>
+    /* CSS Reset & Variables */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg-color: #FAF8F5;
+      --card-bg: #FFFFFF;
+      --text-main: #2C2A29;
+      --text-sub: #6E6A66;
+      --accent-color: #8C7B6B;
+      --border-color: #E8E3DD;
+      --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.03);
+      --font-serif: 'Nanum Myeongjo', 'Garamond', serif;
+      --font-sans: 'Pretendard', 'Noto Sans KR', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Layout Frame */
+    header {
+      background-color: rgba(250, 248, 245, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    /* Pure CSS Tab Navigation Setup */
+    input[type="radio"] {
+      display: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links label {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-links label:hover {
+      color: var(--text-main);
+    }
+
+    /* Active Tab Stylings */
+    #tab-home:checked ~ header label[for="tab-home"],
+    #tab-story:checked ~ header label[for="tab-story"],
+    #tab-menu:checked ~ header label[for="tab-menu"],
+    #tab-location:checked ~ header label[for="tab-location"],
+    #tab-contact:checked ~ header label[for="tab-contact"] {
+      color: var(--text-main);
+      font-weight: 600;
+      border-bottom: 2px solid var(--accent-color);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Active Section display */
+    #tab-home:checked ~ main #content-home,
+    #tab-story:checked ~ main #content-story,
+    #tab-menu:checked ~ main #content-menu,
+    #tab-location:checked ~ main #content-location,
+    #tab-contact:checked ~ main #content-contact {
+      display: block;
+    }
+
+    /* Section Styles */
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      letter-spacing: 2px;
+    }
+
+    /* Home Gallery Grid */
+    .hero-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .gallery-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-light);
+    }
+
+    .gallery-img-box {
+      width: 100%;
+      background-color: #F4F1EA;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    /* Compact image setting */
+    .gallery-img-box.compact-img {
+      padding: 1rem;
+    }
+
+    .compact-img img {
+      max-width: 280px;
+      height: 180px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 4px solid #fff;
+    }
+
+    .gallery-img-box img.full-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .gallery-card p {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+
+    /* Story Section */
+    .story-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 3.5rem 3rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-light);
+    }
+
+    .story-img-frame {
+      width: 100%;
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--border-color);
+      padding: 8px;
+      background: #FAF8F5;
+      box-shadow: var(--shadow-light);
+    }
+
+    .story-img-frame img {
+      width: 100%;
+      height: auto;
+      max-height: 480px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .story-text {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      line-height: 2.2;
+      color: #4A4744;
+      white-space: pre-line;
+      text-align: justify;
+    }
+
+    /* Menu Section (Sub-tabs) */
+    .menu-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .menu-tabs label {
+      font-size: 0.9rem;
+      padding: 0.4rem 1.2rem;
+      border: 1px solid var(--border-color);
+      background-color: var(--card-bg);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    /* Inner Menu Tab Logic */
+    #menu-all:checked ~ .menu-tabs label[for="menu-all"],
+    #menu-coffee:checked ~ .menu-tabs label[for="menu-coffee"],
+    #menu-dessert:checked ~ .menu-tabs label[for="menu-dessert"] {
+      background-color: var(--text-main);
+      color: #FFF;
+      border-color: var(--text-main);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .menu-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+    }
+
+    .menu-item-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed var(--border-color);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .menu-item-name {
+      font-weight: 500;
+    }
+
+    .menu-item-price {
+      color: var(--accent-color);
+      font-weight: 500;
+    }
+
+    .menu-item-desc {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+
+    #menu-coffee:checked ~ .menu-grid .menu-item:not(.coffee),
+    #menu-dessert:checked ~ .menu-grid .menu-item:not(.dessert) {
+      display: none;
+    }
+
+    /* Location Section */
+    .info-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .info-list {
+      list-style: none;
+      margin-top: 1.5rem;
+    }
+
+    .info-list li {
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .info-label {
+      font-weight: 600;
+      min-width: 80px;
+      color: var(--text-sub);
+    }
+
+    /* Contact Form */
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--text-main);
+      color: white;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--accent-color);
+    }
+
+    /* Footer */
+    footer {
+      background-color: #F3EFEA;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-top: auto;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .nav-links {
+        gap: 1rem;
+      }
+      .story-container, .info-card, .form-container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Pure CSS Tab Controllers -->
+  <input type="radio" id="tab-home" name="main-tab" checked>
+  <input type="radio" id="tab-story" name="main-tab">
+  <input type="radio" id="tab-menu" name="main-tab">
+  <input type="radio" id="tab-location" name="main-tab">
+  <input type="radio" id="tab-contact" name="main-tab">
+
+  <!-- Header Section -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">MEMORY 1409</a>
+      <ul class="nav-links">
+        <li><label for="tab-home">홈</label></li>
+        <li><label for="tab-story">가게소개</label></li>
+        <li><label for="tab-menu">메뉴</label></li>
+        <li><label for="tab-location">오시는 길</label></li>
+        <li><label for="tab-contact">문의</label></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main>
+    <!-- 1. Home Section -->
+    <section id="content-home" class="tab-content">
+      <h2 class="section-title">작은 전시장, 따뜻한 기억</h2>
+      <div class="hero-gallery">
+        <!-- 첫 번째 카드 -->
+        <div class="gallery-card">
+          <div class="gallery-img-box compact-img">
+            <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80" alt="원두">
+          </div>
+          <p>매일 아침 엄선된 원두를 정성스럽게 로스팅합니다.</p>
+        </div>
+
+        <!-- 두 번째 카드 -->
+        <div class="gallery-card">
+          <div class="gallery-img-box">
+            <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80" alt="여백과 커피" class="full-img">
+          </div>
+          <p>밝고 아늑한 공간에서 온전한 휴식을 누려보세요.</p>
+        </div>
+
+        <!-- 세 번째 카드 -->
+        <div class="gallery-card">
+          <div class="gallery-img-box">
+            <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80" alt="1409의 순간들" class="full-img">
+          </div>
+          <p>소소하지만 다정한 우리 동네의 아지트입니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Story Section (생성된 이미지 반영 영역) -->
+    <section id="content-story" class="tab-content">
+      <h2 class="section-title">BRAND STORY</h2>
+      <div class="story-container">
+        <!-- 브랜드 이미지 프레임 -->
+        <div class="story-img-frame">
+          <img src="story_cafe.png" alt="메모리1409 매장 전경">
+        </div>
+
+        <div class="story-text">
+          어릴 적 제가 살던 집의 번지수는 '1409'였습니다.
+
+          그곳은 언제나 다정하고 따뜻했으며, 일상의 작은 즐거움들이 가득했던 보금자리였습니다. 어른이 된 지금도 그 시절 1409번지에서 느꼈던 편안함은 삶의 소중한 자산으로 남아있습니다.
+
+          메모리1409는 그 시절의 아늑한 기억을 바탕으로 만들어진 공간입니다. 
+
+          미술 전시장에 온 듯 밝고 깨끗한 아이보리 톤의 분위기 속에서, 바쁜 일상 중 잠시 들러 따뜻한 커피 한 잔과 함께 편안함을 느껴보시길 바랍니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Menu Section -->
+    <section id="content-menu" class="tab-content">
+      <h2 class="section-title">MENU</h2>
+      
+      <!-- Inner Menu Tab Controllers -->
+      <input type="radio" id="menu-all" name="sub-menu-tab" checked>
+      <input type="radio" id="menu-coffee" name="sub-menu-tab">
+      <input type="radio" id="menu-dessert" name="sub-menu-tab">
+
+      <div class="menu-tabs">
+        <label for="menu-all">전체</label>
+        <label for="menu-coffee">커피</label>
+        <label for="menu-dessert">디저트</label>
+      </div>
+
+      <div class="menu-grid">
+        <div class="menu-item coffee">
+          <div class="menu-item-header">
+            <span class="menu-item-name">1409 시그니처 라떼</span>
+            <span class="menu-item-price">₩ 5,500</span>
+          </div>
+          <p class="menu-item-desc">부드러운 크림과 은은한 고소함이 어우러진 주력 메뉴</p>
+        </div>
+
+        <div class="menu-item coffee">
+          <div class="menu-item-header">
+            <span class="menu-item-name">드립 커피 (핸드드립)</span>
+            <span class="menu-item-price">₩ 5,000</span>
+          </div>
+          <p class="menu-item-desc">정성스럽게 내린 깔끔한 원두커피</p>
+        </div>
+
+        <div class="menu-item coffee">
+          <div class="menu-item-header">
+            <span class="menu-item-name">아메리카노</span>
+            <span class="menu-item-price">₩ 4,000</span>
+          </div>
+          <p class="menu-item-desc">균형 잡힌 바디감과 고소한 풍미의 기본 커피</p>
+        </div>
+
+        <div class="menu-item dessert">
+          <div class="menu-item-header">
+            <span class="menu-item-name">수제 스콘 & 잼</span>
+            <span class="menu-item-price">₩ 3,800</span>
+          </div>
+          <p class="menu-item-desc">매일 아침 직접 굽는 고소한 스콘</p>
+        </div>
+
+        <div class="menu-item dessert">
+          <div class="menu-item-header">
+            <span class="menu-item-name">아이보리 치즈케이크</span>
+            <span class="menu-item-price">₩ 6,000</span>
+          </div>
+          <p class="menu-item-desc">진하고 부드러운 전시장 감성의 디저트</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Location Section -->
+    <section id="content-location" class="tab-content">
+      <h2 class="section-title">LOCATION</h2>
+      <div class="info-card">
+        <div class="gallery-img-box" style="margin-bottom: 2rem;">
+          <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=800&q=80" alt="가게 약도 이미지" class="full-img">
+        </div>
+        <ul class="info-list">
+          <li>
+            <span class="info-label">주소</span>
+            <span>대구광역시 북구 칠성남로 70 상가 101호</span>
+          </li>
+          <li>
+            <span class="info-label">전화번호</span>
+            <span>010-7899-7899</span>
+          </li>
+          <li>
+            <span class="info-label">운영시간</span>
+            <span>월 - 토요일 : 10:00 - 20:00 (일요일 휴무)</span>
+          </li>
+          <li>
+            <span class="info-label">안내사항</span>
+            <span>아파트 상가 주차장 이용 가능, 주차 등록 지원</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5. Contact Section -->
+    <section id="content-contact" class="tab-content">
+      <h2 class="section-title">CONTACT US</h2>
+      <div class="form-container">
+        <form action="#" method="post" onsubmit="alert('문의가 전송되었습니다.'); return false;">
+          <div class="form-group">
+            <label for="name">성함</label>
+            <input type="text" id="name" required placeholder="성함을 입력해 주세요">
+          </div>
+          <div class="form-group">
+            <label for="contact">연락처</label>
+            <input type="tel" id="contact" required placeholder="010-0000-0000">
+          </div>
+          <div class="form-group">
+            <label for="message">문의 내용 및 방명록</label>
+            <textarea id="message" rows="5" required placeholder="따뜻한 남김말이나 문의사항을 남겨주세요."></textarea>
+          </div>
+          <button type="submit" class="btn-submit">보내기</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>&copy; Memory 1409. All rights reserved.</p>
+    <p>대구 북구 칠성남로70 상가 101호 | Tel. 010-7899-7899</p>
+  </footer>
+
+</body>
+</html>

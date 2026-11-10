@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>온라인 만세력</title>
+
+    <!-- lunar-javascript 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, "Malgun Gothic", sans-serif;
+            background: #f3f1ec;
+            color: #222;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .input-area {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #222;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        #result {
+            margin-top: 35px;
+            display: none;
+        }
+
+        .result-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .saju {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .pillar {
+            text-align: center;
+            padding: 20px 10px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .pillar-name {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .hanja {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .korean {
+            font-size: 15px;
+            color: #777;
+        }
+
+        .eight-letters {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #222;
+            color: white;
+            border-radius: 10px;
+        }
+
+        .eight-letters h3 {
+            margin-top: 0;
+        }
+
+        #eightChar {
+            font-size: 30px;
+            letter-spacing: 8px;
+            font-weight: bold;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f1f1;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .input-area {
+                grid-template-columns: 1fr;
+            }
+
+            .saju {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>사주 만세력</h1>
+
+        <p class="subtitle">
+            생년월일과 시간을 입력하면 사주팔자를 확인할 수 있습니다.
+        </p>
+
+        <div class="card">
+
+            <div class="input-area">
+
+                <div class="input-group">
+                    <label for="date">생년월일</label>
+                    <input type="date" id="date">
+                </div>
+
+                <div class="input-group">
+                    <label for="time">태어난 시간</label>
+                    <input type="time" id="time" value="12:00">
+                </div>
+
+            </div>
+
+            <button onclick="calculateSaju()">
+                사주팔자 확인하기
+            </button>
+
+            <div id="result">
+
+                <div class="result-title">
+                    나의 사주팔자
+                </div>
+
+                <div class="saju">
+
+                    <!-- 년주 -->
+                    <div class="pillar">
+                        <div class="pillar-name">년주</div>
+
+                        <div class="hanja" id="yearGan"></div>
+                        <div class="korean" id="yearGanKor"></div>
+
+                        <div class="hanja" id="yearJi"></div>
+                        <div class="korean" id="yearJiKor"></div>
+                    </div>
+
+                    <!-- 월주 -->
+                    <div class="pillar">
+                        <div class="pillar-name">월주</div>
+
+                        <div class="hanja" id="monthGan"></div>
+                        <div class="korean" id="monthGanKor"></div>
+
+                        <div class="hanja" id="monthJi"></div>
+                        <div class="korean" id="monthJiKor"></div>
+                    </div>
+
+                    <!-- 일주 -->
+                    <div class="pillar">
+                        <div class="pillar-name">일주</div>
+
+                        <div class="hanja" id="dayGan"></div>
+                        <div class="korean" id="dayGanKor"></div>
+
+                        <div class="hanja" id="dayJi"></div>
+                        <div class="korean" id="dayJiKor"></div>
+                    </div>
+
+                    <!-- 시주 -->
+                    <div class="pillar">
+                        <div class="pillar-name">시주</div>
+
+                        <div class="hanja" id="timeGan"></div>
+                        <div class="korean" id="timeGanKor"></div>
+
+                        <div class="hanja" id="timeJi"></div>
+                        <div class="korean" id="timeJiKor"></div>
+                    </div>
+
+                </div>
+
+                <div class="eight-letters">
+
+                    <h3>사주팔자 8글자</h3>
+
+                    <div id="eightChar"></div>
+
+                </div>
+
+                <div class="info" id="lunarInfo"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // 한자 → 한글 변환
+        const korean = {
+
+            "甲": "갑",
+            "乙": "을",
+            "丙": "병",
+            "丁": "정",
+            "戊": "무",
+            "己": "기",
+            "庚": "경",
+            "辛": "신",
+            "壬": "임",
+            "癸": "계",
+
+            "子": "자",
+            "丑": "축",
+            "寅": "인",
+            "卯": "묘",
+            "辰": "진",
+            "巳": "사",
+            "午": "오",
+            "未": "미",
+            "申": "신",
+            "酉": "유",
+            "戌": "술",
+            "亥": "해"
+        };
+
+
+        // 글자를 천간과 지지로 나누는 함수
+        function splitPillar(pillar) {
+
+            return {
+                gan: pillar.charAt(0),
+                ji: pillar.charAt(1)
+            };
+
+        }
+
+
+        // 사주 계산 함수
+        function calculateSaju() {
+
+            const dateValue = document.getElementById("date").value;
+            const timeValue = document.getElementById("time").value;
+
+            // 날짜를 입력하지 않은 경우
+            if (!dateValue) {
+
+                alert("생년월일을 입력해주세요.");
+                return;
+
+            }
+
+
+            // 날짜 분리
+            const dateParts = dateValue.split("-");
+
+            const year = Number(dateParts[0]);
+            const month = Number(dateParts[1]);
+            const day = Number(dateParts[2]);
+
+
+            // 시간 분리
+            let hour = 12;
+            let minute = 0;
+
+            if (timeValue) {
+
+                const timeParts = timeValue.split(":");
+
+                hour = Number(timeParts[0]);
+                minute = Number(timeParts[1]);
+
+            }
+
+
+            // 양력 날짜 객체 생성
+            const solar = Solar.fromYmdHms(
+                year,
+                month,
+                day,
+                hour,
+                minute,
+                0
+            );
+
+
+            // 음력 객체 변환
+            const lunar = solar.getLunar();
+
+
+            // 팔자 객체
+            const eightChar = lunar.getEightChar();
+
+
+            // 년주, 월주, 일주, 시주
+            const yearPillar = splitPillar(eightChar.getYear());
+            const monthPillar = splitPillar(eightChar.getMonth());
+            const dayPillar = splitPillar(eightChar.getDay());
+            const timePillar = splitPillar(eightChar.getTime());
+
+
+            // ===== 년주 출력 =====
+
+            document.getElementById("yearGan").textContent =
+                yearPillar.gan;
+
+            document.getElementById("yearGanKor").textContent =
+                korean[yearPillar.gan];
+
+            document.getElementById("yearJi").textContent =
+                yearPillar.ji;
+
+            document.getElementById("yearJiKor").textContent =
+                korean[yearPillar.ji];
+
+
+            // ===== 월주 출력 =====
+
+            document.getElementById("monthGan").textContent =
+                monthPillar.gan;
+
+            document.getElementById("monthGanKor").textContent =
+                korean[monthPillar.gan];
+
+            document.getElementById("monthJi").textContent =
+                monthPillar.ji;
+
+            document.getElementById("monthJiKor").textContent =
+                korean[monthPillar.ji];
+
+
+            // ===== 일주 출력 =====
+
+            document.getElementById("dayGan").textContent =
+                dayPillar.gan;
+
+            document.getElementById("dayGanKor").textContent =
+                korean[dayPillar.gan];
+
+            document.getElementById("dayJi").textContent =
+                dayPillar.ji;
+
+            document.getElementById("dayJiKor").textContent =
+                korean[dayPillar.ji];
+
+
+            // ===== 시주 출력 =====
+
+            document.getElementById("timeGan").textContent =
+                timePillar.gan;
+
+            document.getElementById("timeGanKor").textContent =
+                korean[timePillar.gan];
+
+            document.getElementById("timeJi").textContent =
+                timePillar.ji;
+
+            document.getElementById("timeJiKor").textContent =
+                korean[timePillar.ji];
+
+
+            // 8글자 표시
+            document.getElementById("eightChar").textContent =
+                yearPillar.gan +
+                yearPillar.ji +
+                monthPillar.gan +
+                monthPillar.ji +
+                dayPillar.gan +
+                dayPillar.ji +
+                timePillar.gan +
+                timePillar.ji;
+
+
+            // 음력 정보 표시
+            document.getElementById("lunarInfo").innerHTML =
+                "<strong>입력한 양력:</strong> " +
+                year + "년 " +
+                month + "월 " +
+                day + "일 " +
+
+                hour + "시 " +
+                minute + "분<br><br>" +
+
+                "<strong>음력:</strong> " +
+                lunar.toString() + "<br>" +
+
+                "<strong>띠:</strong> " +
+                lunar.getYearShengXiao();
+
+
+            // 결과 표시
+            document.getElementById("result").style.display = "block";
+
+        }
+
+    </script>
+
+</body>
+</html>
